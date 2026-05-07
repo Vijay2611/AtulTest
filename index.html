@@ -705,6 +705,13 @@ async function sendToSheet(studentData) {
     document.body.appendChild(sc);
   });
 }
+async function saveToLocal(studentData) {
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+  students.push(studentData);
+
+  localStorage.setItem("students", JSON.stringify(students));
+}
 async function flushOfflineQueue() {
   if (!offlineQueue.length || !APPS_SCRIPT_URL || APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwbtIbfUni3YcNOEkLrKBWKDYO_8iRayL3ff0Hbtv7qldu19afrgvRm46pW4jTE0mcq/exec") return;
   const remaining = [];
