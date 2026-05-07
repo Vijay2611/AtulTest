@@ -11,6 +11,14 @@ const HEADERS = [
   "गणित L1","गणित L2","गणित श्रेणी","समग्र श्रेणी"
 ];
 
+function saveToLocal(studentData) {
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+  students.push(studentData);
+
+  localStorage.setItem("students", JSON.stringify(students));
+}
+
 function getOrCreateSheet() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
   let sheet = ss.getSheetByName("डेटा");
