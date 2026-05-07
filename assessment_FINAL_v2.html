@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>विद्यार्थी मूल्यांकन - खैरथल तिजारा</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Serif+Devanagari:wght@400;700&display=swap');
+  :root {
+    --primary: #1a5276; --primary-light: #2980b9; --accent: #e67e22;
+    --success: #27ae60; --warning: #d4ac0d; --danger: #e74c3c; --partial: #e67e22;
+    --bg: #f0f4f8; --card: #ffffff; --text: #1a252f; --text-muted: #5d6d7e;
+    --border: #d5d8dc; --radius: 12px; --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans Devanagari', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+  .header { background: var(--primary); color: white; padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
+  .header-title { font-size: 16px; font-weight: 600; flex: 1; }
+  .header-sub { font-size: 12px; opacity: 0.8; }
+  .back-btn { background: rgba(255,255,255,0.15); border: none; color: white; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; font-family: inherit; }
+  .content { flex: 1; padding: 16px; overflow-y: auto; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .login-hero { background: var(--primary); color: white; padding: 32px 20px 24px; text-align: center; }
+  .login-hero h1 { font-family: 'Noto Serif Devanagari', serif; font-size: 22px; margin-bottom: 6px; }
+  .login-hero p { font-size: 13px; opacity: 0.85; }
+  .login-badge { display: inline-block; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 14px; font-size: 12px; margin-top: 8px; }
+  .sync-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(39,174,96,0.2); border-radius: 20px; padding: 4px 12px; font-size: 11px; margin-top: 6px; color: #a9dfbf; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #a9dfbf; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .form-group { margin-bottom: 14px; }
+  .form-label { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; display: block; }
+  .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 15px; font-family: inherit; background: white; color: var(--text); transition: border-color 0.2s; }
+  .form-input:focus { outline: none; border-color: var(--primary-light); }
+  select.form-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235d6d7e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+  .btn { width: 100%; padding: 13px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-outline { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+  .error-msg { color: var(--danger); font-size: 13px; margin-top: 8px; padding: 8px 12px; background: #fdf2f2; border-radius: 8px; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .stat-card { background: var(--card); border-radius: 10px; padding: 14px; text-align: center; box-shadow: var(--shadow); }
+  .stat-num { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .stat-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .menu-btn { background: var(--card); border: none; border-radius: var(--radius); padding: 18px 12px; text-align: center; cursor: pointer; box-shadow: var(--shadow); font-family: inherit; transition: transform 0.15s; }
+  .menu-btn:active { transform: scale(0.97); }
+  .menu-icon { font-size: 28px; margin-bottom: 6px; }
+  .menu-label { font-size: 13px; font-weight: 600; color: var(--text); }
+  .menu-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .section-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid var(--bg); }
+  .subject-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
+  .tab { padding: 7px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; border: 1.5px solid var(--border); background: white; cursor: pointer; white-space: nowrap; font-family: inherit; }
+  .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .tab.done { background: var(--success); color: white; border-color: var(--success); }
+  .level-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 10px; }
+  .level-1 { background: #eaf4fb; color: #1a5276; }
+  .level-2 { background: #eafaf1; color: #1e8449; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 12px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.4s; }
+  .timer { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); }
+  .timer-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse 1s infinite; }
+  .timer.warn { color: var(--danger); }
+  .timer.warn .timer-dot { background: var(--danger); }
+  .q-card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .q-type-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; background: #eaf4fb; color: #1a5276; }
+  .q-instruction { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-style: italic; line-height: 1.5; }
+  .q-content { background: #f8f9fa; border-radius: 10px; padding: 14px; margin-bottom: 12px; border-left: 4px solid var(--primary); }
+  .q-content-text { font-size: 18px; font-weight: 600; line-height: 1.8; color: var(--text); white-space: pre-line; }
+  .q-content-en { font-size: 20px; font-weight: 700; letter-spacing: 1px; color: var(--primary); white-space: pre-line; line-height: 1.8; }
+  .q-expected { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+  .q-expected span { font-weight: 600; color: var(--text); }
+  .q-num { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .mark-row { display: flex; gap: 8px; }
+  .mark-btn { flex: 1; padding: 14px 6px; border-radius: 12px; border: 2px solid var(--border); background: white; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.3; }
+  .mark-btn .mark-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+  .mark-btn.correct-btn { border-color: var(--success); color: var(--success); }
+  .mark-btn.correct-btn.selected, .mark-btn.correct-btn:hover { background: var(--success); color: white; }
+  .mark-btn.partial-btn { border-color: var(--partial); color: var(--partial); }
+  .mark-btn.partial-btn.selected, .mark-btn.partial-btn:hover { background: var(--partial); color: white; }
+  .mark-btn.wrong-btn { border-color: var(--danger); color: var(--danger); }
+  .mark-btn.wrong-btn.selected, .mark-btn.wrong-btn:hover { background: var(--danger); color: white; }
+  .mark-btn:disabled { opacity: 0.4; cursor: default; }
+  .result-hero { text-align: center; padding: 16px 0 10px; }
+  .result-name { font-size: 20px; font-weight: 700; }
+  .result-school { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .subject-result { background: var(--card); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .sr-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .sr-name { font-size: 15px; font-weight: 600; }
+  .proficiency-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .prof-needs { background: #fdf2f2; color: var(--danger); }
+  .prof-developing { background: #fef9e7; color: #b7770d; }
+  .prof-proficient { background: #eafaf1; color: var(--success); }
+  .sr-detail { font-size: 13px; color: var(--text-muted); }
+  .sr-scores { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 12px; overflow-x: auto; }
+  .filter-chip { padding: 6px 12px; border-radius: 20px; font-size: 12px; border: 1.5px solid var(--border); background: white; cursor: pointer; font-family: inherit; white-space: nowrap; }
+  .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .student-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--bg); }
+  .student-row:last-child { border-bottom: none; }
+  .student-name { font-size: 14px; font-weight: 600; }
+  .student-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .subject-dots { display: flex; gap: 4px; margin-top: 4px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-needs { background: var(--danger); }
+  .dot-developing { background: var(--warning); }
+  .dot-proficient { background: var(--success); }
+  .dot-pending { background: var(--border); }
+  .summary-bar { height: 8px; border-radius: 4px; margin: 8px 0; display: flex; overflow: hidden; gap: 2px; }
+  .bar-seg { height: 100%; border-radius: 2px; }
+  .summary-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; }
+  .block-card-d { background: var(--card); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); cursor: pointer; }
+  .block-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .block-name { font-size: 16px; font-weight: 700; color: var(--primary); }
+  .block-stats { display: flex; gap: 14px; }
+  .bstat { text-align: center; }
+  .bstat-num { font-weight: 700; font-size: 18px; }
+  .bstat-lbl { font-size: 11px; color: var(--text-muted); }
+  .export-btn { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 14px; width: 100%; margin-bottom: 10px; cursor: pointer; font-family: inherit; }
+  .export-icon { font-size: 24px; }
+  .export-info { text-align: left; }
+  .export-title { font-size: 14px; font-weight: 600; }
+  .export-sub { font-size: 12px; color: var(--text-muted); }
+  .level-transition { background: #eafaf1; border: 1.5px solid var(--success); border-radius: var(--radius); padding: 16px; text-align: center; margin-bottom: 12px; }
+  .level-transition h3 { color: var(--success); font-size: 16px; margin-bottom: 6px; }
+  .level-transition p { font-size: 13px; color: var(--text-muted); }
+  .next-btn { margin-top: 12px; background: var(--success); color: white; border: none; border-radius: 10px; padding: 12px 24px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer; width: 100%; }
+  .sync-status { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px; }
+  .sync-ok { background: #eafaf1; color: var(--success); }
+  .sync-fail { background: #fdf2f2; color: var(--danger); }
+  .sync-pending { background: #fef9e7; color: var(--warning); }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a252f; color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 40px; margin-bottom: 10px; }
+  .loading { text-align: center; padding: 30px; color: var(--text-muted); font-size: 14px; }
+  .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .offline-queue { background: #fef9e7; border: 1px solid #f9e4b7; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #856404; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div class="screen active" id="screen-login">
+  <div class="login-hero">
+    <h1>विद्यार्थी मूल्यांकन</h1>
+    <p>खैरथल-तिजारा जिला, राजस्थान</p>
+    <span class="login-badge">ASER आधारित दक्षता परीक्षण</span><br>
+    <span class="sync-badge"><div class="sync-dot"></div>Google Sheets से जुड़ा हुआ</span>
+  </div>
+  <div class="content" style="max-width:420px;margin:0 auto;width:100%">
+    <div class="card" style="margin-top:8px">
+      <div class="form-group">
+        <label class="form-label">उपयोगकर्ता नाम</label>
+        <input class="form-input" id="login-user" type="text" placeholder="username" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="form-label">पासवर्ड</label>
+        <input class="form-input" id="login-pass" type="password" placeholder="password">
+      </div>
+      <div id="login-error" class="error-msg" style="display:none"></div>
+      <button class="btn btn-primary" onclick="doLogin()">लॉगिन करें</button>
+    </div>
+    <p style="text-align:center;font-size:12px;color:var(--text-muted);margin-top:12px">जिला शिक्षा विभाग, खैरथल-तिजारा</p>
+  </div>
+</div>
+
+<!-- SCHOOL DASHBOARD -->
+<div class="screen" id="screen-school-dash">
+  <div class="header">
+    <div>
+      <div class="header-title" id="school-dash-title">विद्यालय डैशबोर्ड</div>
+      <div class="header-sub" id="school-dash-sub"></div>
+    </div>
+    <button class="back-btn" onclick="doLogout()">लॉगआउट</button>
+  </div>
+  <div class="content">
+    <div id="offline-queue-notice"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="sd-total">0</div><div class="stat-label">कुल मूल्यांकन</div></div>
+      <div class="stat-card"><div class="stat-num" id="sd-proficient" style="color:var(--success)">0</div><div class="stat-label">दक्ष</div></div>
+      <div class="stat-card"><div class="stat-num" id="sd-developing" style="color:var(--warning)">0</div><div class="stat-label">विकासशील</div></div>
+      <div class="stat-card"><div class="stat-num" id="sd-needs" style="color:var(--danger)">0</div><div class="stat-label">सहायता चाहिए</div></div>
+    </div>
+    <div class="menu-grid">
+      <button class="menu-btn" onclick="showScreen('screen-new-student')">
+        <div class="menu-icon">➕</div><div class="menu-label">नया विद्यार्थी</div><div class="menu-sub">मूल्यांकन शुरू करें</div>
+      </button>
+      <button class="menu-btn" onclick="loadAndShowReports('school')">
+        <div class="menu-icon">📋</div><div class="menu-label">रिपोर्ट देखें</div><div class="menu-sub">सभी विद्यार्थी</div>
+      </button>
+      <button class="menu-btn" onclick="showSubjectSummary()">
+        <div class="menu-icon">📊</div><div class="menu-label">विषय सारांश</div><div class="menu-sub">तुलनात्मक रिपोर्ट</div>
+      </button>
+      <button class="menu-btn" onclick="openSheet()">
+        <div class="menu-icon">📥</div><div class="menu-label">Google Sheet</div><div class="menu-sub">डेटा सीधे देखें</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW STUDENT -->
+<div class="screen" id="screen-new-student">
+  <div class="header">
+    <button class="back-btn" onclick="goBack('screen-school-dash')">← वापस</button>
+    <div style="flex:1;margin-left:10px"><div class="header-title">नया विद्यार्थी</div></div>
+  </div>
+  <div class="content">
+    <div class="card">
+      <div class="section-title">विद्यार्थी की जानकारी</div>
+      <div class="form-group">
+        <label class="form-label">विद्यार्थी का नाम *</label>
+        <input class="form-input" id="st-name" type="text" placeholder="पूरा नाम लिखें">
+      </div>
+      <div class="form-group">
+        <label class="form-label">पिता का नाम *</label>
+        <input class="form-input" id="st-father" type="text" placeholder="पिता का नाम">
+      </div>
+      <div class="form-group">
+        <label class="form-label">कक्षा *</label>
+        <select class="form-input" id="st-class">
+          <option value="">कक्षा चुनें</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option>
+          <option>5</option><option>6</option><option>7</option><option>8</option>
+        </select>
+      </div>
+      <div id="error-student" class="error-msg" style="display:none"></div>
+      <button class="btn btn-primary" onclick="startAssessment()">मूल्यांकन शुरू करें →</button>
+    </div>
+    <div class="card" style="background:#fffbf0;border:1px solid #f9e4b7">
+      <div style="font-size:13px;font-weight:600;color:#856404;margin-bottom:8px">📋 शिक्षक के लिए निर्देश</div>
+      <div style="font-size:12px;color:#856404;line-height:1.8">
+        • प्रत्येक विद्यार्थी को अधिकतम <strong>5 मिनट</strong> दें<br>
+        • प्रश्न पढ़कर / दिखाकर बच्चे से उत्तर लें<br>
+        • <strong>✓ सही</strong> = पूरा सही (2 अंक)<br>
+        • <strong>〜 आंशिक</strong> = थोड़ा सही (1 अंक)<br>
+        • <strong>✗ गलत</strong> = नहीं जानता (0 अंक)<br>
+        • स्तर 1 में 8+ अंक → स्वतः स्तर 2 खुलेगा<br>
+        • डेटा Google Sheets में अपने आप सहेजा जाएगा
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSESSMENT -->
+<div class="screen" id="screen-assessment">
+  <div class="header">
+    <div>
+      <div class="header-title" id="assess-title">मूल्यांकन</div>
+      <div class="header-sub" id="assess-sub"></div>
+    </div>
+    <div id="timer-display" class="timer">
+      <div class="timer-dot"></div>
+      <span id="timer-text">5:00</span>
+    </div>
+  </div>
+  <div class="content">
+    <div class="progress-bar"><div class="progress-fill" id="assess-progress" style="width:0%"></div></div>
+    <div class="subject-tabs" id="subject-tabs"></div>
+    <div id="assess-content"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div class="header"><div class="header-title">मूल्यांकन परिणाम</div></div>
+  <div class="content">
+    <div class="card result-hero">
+      <div class="result-name" id="result-name"></div>
+      <div class="result-school" id="result-school"></div>
+    </div>
+    <div id="result-subjects"></div>
+    <div class="card">
+      <div class="section-title">समग्र स्थिति</div>
+      <div id="result-overall"></div>
+    </div>
+    <div id="sync-result-status"></div>
+    <button class="btn btn-success" onclick="saveAndContinue()" style="margin-bottom:10px" id="save-btn">
+      ✓ सहेजें और अगला विद्यार्थी
+    </button>
+    <button class="btn btn-outline" onclick="showScreen('screen-school-dash')">डैशबोर्ड पर जाएं</button>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="screen" id="screen-reports">
+  <div class="header">
+    <button class="back-btn" onclick="goBackFromReport()">← वापस</button>
+    <div style="flex:1;margin-left:10px">
+      <div class="header-title">रिपोर्ट</div>
+      <div class="header-sub" id="report-sub"></div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="filter-row" id="filter-row"></div>
+    <div id="report-content"></div>
+  </div>
+</div>
+
+<!-- SUBJECT SUMMARY -->
+<div class="screen" id="screen-subject-summary">
+  <div class="header">
+    <button class="back-btn" onclick="goBack('screen-school-dash')">← वापस</button>
+    <div style="flex:1;margin-left:10px"><div class="header-title">विषय सारांश</div></div>
+  </div>
+  <div class="content" id="subject-summary-content"></div>
+</div>
+
+<!-- DISTRICT -->
+<div class="screen" id="screen-district">
+  <div class="header">
+    <div><div class="header-title">जिला डैशबोर्ड</div><div class="header-sub">खैरथल-तिजारा — Live</div></div>
+    <button class="back-btn" onclick="doLogout()">लॉगआउट</button>
+  </div>
+  <div class="content">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="dd-total">—</div><div class="stat-label">कुल मूल्यांकन</div></div>
+      <div class="stat-card"><div class="stat-num" id="dd-schools">—</div><div class="stat-label">सक्रिय विद्यालय</div></div>
+      <div class="stat-card"><div class="stat-num" id="dd-proficient" style="color:var(--success)">—</div><div class="stat-label">दक्ष</div></div>
+      <div class="stat-card"><div class="stat-num" id="dd-needs" style="color:var(--danger)">—</div><div class="stat-label">सहायता चाहिए</div></div>
+    </div>
+    <div class="menu-grid" style="margin-bottom:14px">
+      <button class="menu-btn" onclick="loadAndShowReports('district')">
+        <div class="menu-icon">📋</div><div class="menu-label">सभी रिपोर्ट</div><div class="menu-sub">जिला स्तर</div>
+      </button>
+      <button class="menu-btn" onclick="openSheet()">
+        <div class="menu-icon">📊</div><div class="menu-label">Google Sheet</div><div class="menu-sub">Live डेटा देखें</div>
+      </button>
+    </div>
+    <div id="district-blocks"></div>
+  </div>
+</div>
+
+<script>
+// ==================== CONFIG ====================
+// IMPORTANT: Replace this URL after deploying Apps Script
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbtIbfUni3YcNOEkLrKBWKDYO_8iRayL3ff0Hbtv7qldu19afrgvRm46pW4jTE0mcq/exec";
+
+// ==================== SCHOOL DATA ====================
+const SCHOOLS = {
+  "TIJARA": ["GSSS Jhiwana","GPS Banaban","GPS Gaddar ki dhani","GSSS LUHADERA","GUPS BAMANTHEDI","GUPS RAMBAS JHOPRI","MGGS LUHADERA","GSSS Ishroda","Gups Shekhpur Aheer","GPS Timliyabas","GSSS Chuharpur","GSSS Udhanbaas","GSSS Indore","GPS Kulawat","GPS Mahandika","GSSS Chawandikalan","GUPS BAI","GPS BARHEDA","MADARSA ISLAMIYA","GSSS BURHEDA","GPS DANGANHEDI","GUPS LADIYA","GPS KHATIWAS","GPS KARMPUR","GSSS HAMIRAKA","GSSS SIROLI KALAN","GPS TAKIYA","GPS JHOPADI","GSSS JAKHOPUR","GSSS MITHIYAWAS","GSSS DHOLI PAHADI","GPS PATAN KALAN","GSSS Salarpur","GSSS Gailpur","GSSS MUSARI","GSSS MASEET","MGGS Hasanpur","GSSS BERLA","GSSS DHAKI","GSSS BIRAMPUR","GSSS FULLAWAS","GSSS GANDHOLA","GSSS FAKRUDEENKA","GSSS NIMBAHEDI","GSSS UBARAKA","GSSS Raikhera","GSSS SEETHAL","GSSS MAHESHRA","GSSS RABADKA","GSSS Majri gurjar","GGsss Kalgaon","GSSS Jodiya Mev","GSSS GAUTOLI","GSSS Khalilpuri","GSSS KAMALPUR","GSSS JALALPUR","GSSS MUNDANA","GSSS MAJRA PIPLI","GSSS JOJAKA","GSSS SALARPUR MEV","GSSS BHINDUSI","GSSS KAHARANI","GSSS Bichhala","GSSS PALPUR","GSSS Bhiwadi","GSSS SAIDPUR","GSSS Udaipur","GSSS Jairoli","GSSS SANTHALKA","GSSS ALAMPUR","GSSS NGALIYA","GSSS BILAHEDI","GSSS GUWALDA","GSSS HASANGORI","GSSS MANDHA MAJRA","GSSS GAHANKAR","GSSS Sarheta","GSSS Lapala","GSSS ROOPBASS","GGSSS GOTHDA","GSSS SHAHBAD","GSSS HASANPUR MAFI","GSSS SHAHDOD","GSSS NAKHNOL","GSSS MAYAPUR","PM SHRI GSSS KHIDARPUR","PM SHRI GSSS TIJARA","GSSS TIJARA","GGSSS BHIWADI","SPGSSS MALIYAR JATT","SHAHID MAHIPAL YADAV GSSS TATARPUR","GPS Banveerpur","GPS Bhudli","GPS ABHANPUR","GPS BASAI","GPS NAUGANWA","GPS TAJALKA","GPS PIPLANA"],
+  "MUNDAWAR": ["GSSS DARBARPUR","GSSS BAWAD SAKATPURA","GSSS BADLI","GSSS NANGAL BAWALA","रा. उ. मा. वि. बासनी","रा. उ. मा. वि. अलीपुर","GSSS PIPLI","GSSS KALUKA","GSSS Tatarpur","GSSS Badheen","GSSS Tejpura","GSSS RANOTH","GSSS SABALGARH","GSSS JHAJHARPUR","MGGS JAT BEHROR","GGSSS PADMADA KALAN","GSSS PADMADA KHURD","GSSS MAJRI KHOLA","GSSS RARWA","GSSS KHANPUR AHIR","GSSS Chandpur","GSSS Mao","PM SHRI GSSS JINDOLI","GGSSS SODAWAS","GSSS SODAWAS","GSSS MUNDAWAR","MGGS MUNDAWAR","GSSS MANKA","GSSS BEHROJ","MGGS JALAWAS","GSSS MOLAWAS","GSSS GADUWAS","MGGS RASGAN","GSSS NANGAL SANTOKDA","GSSS KHARETA","GSSS Sorkha Kalan","GSSS SIHALI KHURD","GSSS SIHALI KALAN","GSSS Sheelgaon","GSSS ULAHEDI","GSSS NANGAL RANIYA","GSSS BALLUWAS","GSSS JAGIWADA","GSSS MAINPUR","GSSS SIYAKHOH","GSSS RAJWARA","GSSS AJARKA","GSSS Palawa","GSSS Dantla","GSSS Nangli Ojha","MGGS MUNDANWARA KALAN","GSSS Pehal","MGGS Beejwar Chauhan","SVP GSSS MOHAMMADPUR","GSSS SHYOPUR","GSSS RENAGIRI","GSSS Sirod Khurd","GSSS SHAMDA","GSSS Naredi","GSSS RUNDH","MGGS MATORE","GSSS BHUNGDA AHEER","GGSS SANOLI","GSSS Gopipura","GSSS Karnikot","GSSS JASAI","GSSS BEHROJ"],
+  "KISHANGARH BAS": ["GSSS BAGHERIKALAN","GSSS MIRZAPUR","MGGS BAGHODA","GGSS BAHADURPUR","GSSS BAHADURPUR","GSSS SIWANA","GSSS VALLBHGRAM","GGSS BAMBORA","GSSS BAMBORA","GSSS BHAJEDA","GSSS BRASANGPUR","GSSS CHIKANI","GSSS CHORBASAI","SWAMI VIVEKANAND GOVT. MODEL SCHOOL KISHANGARH BAS","GSSS DHAMUKAD","GSSS DONGDA","MGGS GHASOLI","GGSS ISMAILPUR","MGGS ISMAILPUR","GSSS JAJOR","GSSS DADARHEDA","GSSS TAHATADA","GSSS JILOTA","GSSS JODIYA PATTI","GSSS KAROLI","GGSS KHANPUR MEWAN","GSSS KHANPUR MEWAN","GSSS KITHOOR","GSSS KOLGAON","GSSS SHEKHPUR","GSSS LANGARBAS","GSSS TITARKA","GSSS MACHHROLI","GSSS KHOHAGAON","GSSS MAHRAMPUR","GSSS MAHOND","GSSS JATKA","GSSS MANCHA","GSSS MEERKA","GSSS MOTHUKA","GSSS MUSAKHERA","GSSS NOORNAGAR","GGSS ANAND NAGAR KHAIRTHAL","GGSS KHAIRTHAL","GSSS KHAIRTHAL","GSSS BAS KRIPAL NAGAR","GSSS OPPOSITE SDM OFFICE KISHANGARH BAS","GSSS ODARA","GSSS PATAN MEWAN","GSSS JAGTA BASAI","MGGS RATAKHURD","GSSS TARWALA","GSSS TEHNOLI","GGSS ADARSH COLONY KISHANGARH BAS","PM SHRI GSSS KHIDARPUR","GSSS CHAMRODA"],
+  "KOTKASIM": ["GSSS AAKOLI","GSSS BAGHANA","GSSS BAGHERI KHURD","GSSS BEELAHEDI","GSSS BHONKER","GSSS NASOPUR","GSSS BUDHI BAWAL","GSSS GHEEKAKA","GSSS GIRWAS","GSSS GIRWAS KANJRAN","GSSS GUNSAR","GSSS Bhojrajka","MGM HARSAULI","GSSS HARSAULI","GSSS BIBIRANI","GSSS KARWAD","G.V.U.S.S. ALAMPUR","GSSS GUJARIWAS","GSSS JATIYANA","MGGS JHARKA","GGSSS JODIYA","GSSS JODIYA","GSSS KANHARKA","GSSS KATOPUR","GSSS KHANPUR DANGRAN","MGGS LADPUR","GSSS DEENGLI","GSSS MATALWAS","GSSS NANGAL SALIYA","GSSS KOTKASIM","MGGS Kotkasim","GSSS PATALIYA","GSSS KHAROLA","GSSS PATAN AHIR","MGGS PUR","GSSS NEEMLAKA","GSSS TEUWAS","GSSS DALAWAS","GSSS TIGAWAN","GSSS AHER BASNA","SAHEED BALWANT SINGH GSSS UJOLI","MGGS JATUWAS"]
+};
+
+const CREDENTIALS = {};
+// District admin
+CREDENTIALS['district'] = {pass:'district@2024',role:'district',name:'जिला प्रशासन'};
+// School credentials
+CREDENTIALS['t001']={pass:'tj001',role:'school',name:'GSSS Jhiwana',block:'TIJARA'};
+CREDENTIALS['t002']={pass:'tj002',role:'school',name:'GPS Banaban',block:'TIJARA'};
+CREDENTIALS['t003']={pass:'tj003',role:'school',name:'GPS Gaddar ki dhani',block:'TIJARA'};
+CREDENTIALS['t004']={pass:'tj004',role:'school',name:'GSSS LUHADERA',block:'TIJARA'};
+CREDENTIALS['t005']={pass:'tj005',role:'school',name:'GUPS BAMANTHEDI',block:'TIJARA'};
+CREDENTIALS['t006']={pass:'tj006',role:'school',name:'GUPS RAMBAS JHOPRI',block:'TIJARA'};
+CREDENTIALS['t007']={pass:'tj007',role:'school',name:'MGGS LUHADERA',block:'TIJARA'};
+CREDENTIALS['t008']={pass:'tj008',role:'school',name:'GSSS Ishroda',block:'TIJARA'};
+CREDENTIALS['t009']={pass:'tj009',role:'school',name:'Gups Shekhpur Aheer',block:'TIJARA'};
+CREDENTIALS['t010']={pass:'tj010',role:'school',name:'GPS Timliyabas',block:'TIJARA'};
+CREDENTIALS['t011']={pass:'tj011',role:'school',name:'GSSS Chuharpur',block:'TIJARA'};
+CREDENTIALS['t012']={pass:'tj012',role:'school',name:'GSSS Udhanbaas',block:'TIJARA'};
+CREDENTIALS['t013']={pass:'tj013',role:'school',name:'GSSS Indore',block:'TIJARA'};
+CREDENTIALS['t014']={pass:'tj014',role:'school',name:'GPS Kulawat',block:'TIJARA'};
+CREDENTIALS['t015']={pass:'tj015',role:'school',name:'GPS Mahandika',block:'TIJARA'};
+CREDENTIALS['t016']={pass:'tj016',role:'school',name:'GSSS Chawandikalan',block:'TIJARA'};
+CREDENTIALS['t017']={pass:'tj017',role:'school',name:'GUPS BAI',block:'TIJARA'};
+CREDENTIALS['t018']={pass:'tj018',role:'school',name:'GPS BARHEDA',block:'TIJARA'};
+CREDENTIALS['t019']={pass:'tj019',role:'school',name:'MADARSA ISLAMIYA',block:'TIJARA'};
+CREDENTIALS['t020']={pass:'tj020',role:'school',name:'GSSS BURHEDA',block:'TIJARA'};
+CREDENTIALS['t021']={pass:'tj021',role:'school',name:'GPS DANGANHEDI',block:'TIJARA'};
+CREDENTIALS['t022']={pass:'tj022',role:'school',name:'GUPS LADIYA',block:'TIJARA'};
+CREDENTIALS['t023']={pass:'tj023',role:'school',name:'GPS KHATIWAS',block:'TIJARA'};
+CREDENTIALS['t024']={pass:'tj024',role:'school',name:'GPS KARMPUR',block:'TIJARA'};
+CREDENTIALS['t025']={pass:'tj025',role:'school',name:'GSSS HAMIRAKA',block:'TIJARA'};
+CREDENTIALS['t026']={pass:'tj026',role:'school',name:'GSSS SIROLI KALAN',block:'TIJARA'};
+CREDENTIALS['t027']={pass:'tj027',role:'school',name:'GPS TAKIYA',block:'TIJARA'};
+CREDENTIALS['t028']={pass:'tj028',role:'school',name:'GPS JHOPADI',block:'TIJARA'};
+CREDENTIALS['t029']={pass:'tj029',role:'school',name:'GSSS JAKHOPUR',block:'TIJARA'};
+CREDENTIALS['t030']={pass:'tj030',role:'school',name:'GSSS MITHIYAWAS',block:'TIJARA'};
+CREDENTIALS['t031']={pass:'tj031',role:'school',name:'GSSS DHOLI PAHADI',block:'TIJARA'};
+CREDENTIALS['t032']={pass:'tj032',role:'school',name:'GPS PATAN KALAN',block:'TIJARA'};
+CREDENTIALS['t033']={pass:'tj033',role:'school',name:'GSSS Salarpur',block:'TIJARA'};
+CREDENTIALS['t034']={pass:'tj034',role:'school',name:'GSSS Gailpur',block:'TIJARA'};
+CREDENTIALS['t035']={pass:'tj035',role:'school',name:'GSSS MUSARI',block:'TIJARA'};
+CREDENTIALS['t036']={pass:'tj036',role:'school',name:'GSSS MASEET',block:'TIJARA'};
+CREDENTIALS['t037']={pass:'tj037',role:'school',name:'MGGS Hasanpur',block:'TIJARA'};
+CREDENTIALS['t038']={pass:'tj038',role:'school',name:'GSSS BERLA',block:'TIJARA'};
+CREDENTIALS['t039']={pass:'tj039',role:'school',name:'GSSS DHAKI',block:'TIJARA'};
+CREDENTIALS['t040']={pass:'tj040',role:'school',name:'GSSS BIRAMPUR',block:'TIJARA'};
+CREDENTIALS['t041']={pass:'tj041',role:'school',name:'GSSS FULLAWAS',block:'TIJARA'};
+CREDENTIALS['t042']={pass:'tj042',role:'school',name:'GSSS GANDHOLA',block:'TIJARA'};
+CREDENTIALS['t043']={pass:'tj043',role:'school',name:'GSSS FAKRUDEENKA',block:'TIJARA'};
+CREDENTIALS['t044']={pass:'tj044',role:'school',name:'GSSS NIMBAHEDI',block:'TIJARA'};
+CREDENTIALS['t045']={pass:'tj045',role:'school',name:'GSSS UBARAKA',block:'TIJARA'};
+CREDENTIALS['t046']={pass:'tj046',role:'school',name:'GSSS Raikhera',block:'TIJARA'};
+CREDENTIALS['t047']={pass:'tj047',role:'school',name:'GSSS SEETHAL',block:'TIJARA'};
+CREDENTIALS['t048']={pass:'tj048',role:'school',name:'GSSS MAHESHRA',block:'TIJARA'};
+CREDENTIALS['t049']={pass:'tj049',role:'school',name:'GSSS RABADKA',block:'TIJARA'};
+CREDENTIALS['t050']={pass:'tj050',role:'school',name:'GSSS Majri gurjar',block:'TIJARA'};
+CREDENTIALS['t051']={pass:'tj051',role:'school',name:'GGsss Kalgaon',block:'TIJARA'};
+CREDENTIALS['t052']={pass:'tj052',role:'school',name:'GSSS Jodiya Mev',block:'TIJARA'};
+CREDENTIALS['t053']={pass:'tj053',role:'school',name:'GSSS GAUTOLI',block:'TIJARA'};
+CREDENTIALS['t054']={pass:'tj054',role:'school',name:'GSSS Khalilpuri',block:'TIJARA'};
+CREDENTIALS['t055']={pass:'tj055',role:'school',name:'GSSS KAMALPUR',block:'TIJARA'};
+CREDENTIALS['t056']={pass:'tj056',role:'school',name:'GSSS JALALPUR',block:'TIJARA'};
+CREDENTIALS['t057']={pass:'tj057',role:'school',name:'GSSS MUNDANA',block:'TIJARA'};
+CREDENTIALS['t058']={pass:'tj058',role:'school',name:'GSSS MAJRA PIPLI',block:'TIJARA'};
+CREDENTIALS['t059']={pass:'tj059',role:'school',name:'GSSS JOJAKA',block:'TIJARA'};
+CREDENTIALS['t060']={pass:'tj060',role:'school',name:'GSSS SALARPUR MEV',block:'TIJARA'};
+CREDENTIALS['t061']={pass:'tj061',role:'school',name:'GSSS BHINDUSI',block:'TIJARA'};
+CREDENTIALS['t062']={pass:'tj062',role:'school',name:'GSSS KAHARANI',block:'TIJARA'};
+CREDENTIALS['t063']={pass:'tj063',role:'school',name:'GSSS Bichhala',block:'TIJARA'};
+CREDENTIALS['t064']={pass:'tj064',role:'school',name:'GSSS PALPUR',block:'TIJARA'};
+CREDENTIALS['t065']={pass:'tj065',role:'school',name:'GSSS Bhiwadi',block:'TIJARA'};
+CREDENTIALS['t066']={pass:'tj066',role:'school',name:'GSSS SAIDPUR',block:'TIJARA'};
+CREDENTIALS['t067']={pass:'tj067',role:'school',name:'GSSS Udaipur',block:'TIJARA'};
+CREDENTIALS['t068']={pass:'tj068',role:'school',name:'GSSS Jairoli',block:'TIJARA'};
+CREDENTIALS['t069']={pass:'tj069',role:'school',name:'GSSS SANTHALKA',block:'TIJARA'};
+CREDENTIALS['t070']={pass:'tj070',role:'school',name:'GSSS ALAMPUR',block:'TIJARA'};
+CREDENTIALS['t071']={pass:'tj071',role:'school',name:'GSSS NGALIYA',block:'TIJARA'};
+CREDENTIALS['t072']={pass:'tj072',role:'school',name:'GSSS BILAHEDI',block:'TIJARA'};
+CREDENTIALS['t073']={pass:'tj073',role:'school',name:'GSSS GUWALDA',block:'TIJARA'};
+CREDENTIALS['t074']={pass:'tj074',role:'school',name:'GSSS HASANGORI',block:'TIJARA'};
+CREDENTIALS['t075']={pass:'tj075',role:'school',name:'GSSS MANDHA MAJRA',block:'TIJARA'};
+CREDENTIALS['t076']={pass:'tj076',role:'school',name:'GSSS GAHANKAR',block:'TIJARA'};
+CREDENTIALS['t077']={pass:'tj077',role:'school',name:'GSSS Sarheta',block:'TIJARA'};
+CREDENTIALS['t078']={pass:'tj078',role:'school',name:'GSSS Lapala',block:'TIJARA'};
+CREDENTIALS['t079']={pass:'tj079',role:'school',name:'GSSS ROOPBASS',block:'TIJARA'};
+CREDENTIALS['t080']={pass:'tj080',role:'school',name:'GGSSS GOTHDA',block:'TIJARA'};
+CREDENTIALS['t081']={pass:'tj081',role:'school',name:'GSSS SHAHBAD',block:'TIJARA'};
+CREDENTIALS['t082']={pass:'tj082',role:'school',name:'GSSS HASANPUR MAFI',block:'TIJARA'};
+CREDENTIALS['t083']={pass:'tj083',role:'school',name:'GSSS SHAHDOD',block:'TIJARA'};
+CREDENTIALS['t084']={pass:'tj084',role:'school',name:'GSSS NAKHNOL',block:'TIJARA'};
+CREDENTIALS['t085']={pass:'tj085',role:'school',name:'GSSS MAYAPUR',block:'TIJARA'};
+CREDENTIALS['t086']={pass:'tj086',role:'school',name:'PM SHRI GSSS KHIDARPUR',block:'TIJARA'};
+CREDENTIALS['t087']={pass:'tj087',role:'school',name:'PM SHRI GSSS TIJARA',block:'TIJARA'};
+CREDENTIALS['t088']={pass:'tj088',role:'school',name:'GSSS TIJARA',block:'TIJARA'};
+CREDENTIALS['t089']={pass:'tj089',role:'school',name:'GGSSS BHIWADI',block:'TIJARA'};
+CREDENTIALS['t090']={pass:'tj090',role:'school',name:'SPGSSS MALIYAR JATT',block:'TIJARA'};
+CREDENTIALS['t091']={pass:'tj091',role:'school',name:'SHAHID MAHIPAL YADAV GSSS TATARPUR',block:'TIJARA'};
+CREDENTIALS['t092']={pass:'tj092',role:'school',name:'GPS Banveerpur',block:'TIJARA'};
+CREDENTIALS['t093']={pass:'tj093',role:'school',name:'GPS Bhudli',block:'TIJARA'};
+CREDENTIALS['t094']={pass:'tj094',role:'school',name:'GPS ABHANPUR',block:'TIJARA'};
+CREDENTIALS['t095']={pass:'tj095',role:'school',name:'GPS BASAI',block:'TIJARA'};
+CREDENTIALS['t096']={pass:'tj096',role:'school',name:'GPS NAUGANWA',block:'TIJARA'};
+CREDENTIALS['t097']={pass:'tj097',role:'school',name:'GPS TAJALKA',block:'TIJARA'};
+CREDENTIALS['t098']={pass:'tj098',role:'school',name:'GPS PIPLANA',block:'TIJARA'};
+CREDENTIALS['m001']={pass:'mw001',role:'school',name:'GSSS DARBARPUR',block:'MUNDAWAR'};
+CREDENTIALS['m002']={pass:'mw002',role:'school',name:'GSSS BAWAD SAKATPURA',block:'MUNDAWAR'};
+CREDENTIALS['m003']={pass:'mw003',role:'school',name:'GSSS BADLI',block:'MUNDAWAR'};
+CREDENTIALS['m004']={pass:'mw004',role:'school',name:'GSSS NANGAL BAWALA',block:'MUNDAWAR'};
+CREDENTIALS['m005']={pass:'mw005',role:'school',name:'रा. उ. मा. वि. बासनी',block:'MUNDAWAR'};
+CREDENTIALS['m006']={pass:'mw006',role:'school',name:'रा. उ. मा. वि. अलीपुर',block:'MUNDAWAR'};
+CREDENTIALS['m007']={pass:'mw007',role:'school',name:'GSSS PIPLI',block:'MUNDAWAR'};
+CREDENTIALS['m008']={pass:'mw008',role:'school',name:'GSSS KALUKA',block:'MUNDAWAR'};
+CREDENTIALS['m009']={pass:'mw009',role:'school',name:'GSSS Tatarpur',block:'MUNDAWAR'};
+CREDENTIALS['m010']={pass:'mw010',role:'school',name:'GSSS Badheen',block:'MUNDAWAR'};
+CREDENTIALS['m011']={pass:'mw011',role:'school',name:'GSSS Tejpura',block:'MUNDAWAR'};
+CREDENTIALS['m012']={pass:'mw012',role:'school',name:'GSSS RANOTH',block:'MUNDAWAR'};
+CREDENTIALS['m013']={pass:'mw013',role:'school',name:'GSSS SABALGARH',block:'MUNDAWAR'};
+CREDENTIALS['m014']={pass:'mw014',role:'school',name:'GSSS JHAJHARPUR',block:'MUNDAWAR'};
+CREDENTIALS['m015']={pass:'mw015',role:'school',name:'MGGS JAT BEHROR',block:'MUNDAWAR'};
+CREDENTIALS['m016']={pass:'mw016',role:'school',name:'GGSSS PADMADA KALAN',block:'MUNDAWAR'};
+CREDENTIALS['m017']={pass:'mw017',role:'school',name:'GSSS PADMADA KHURD',block:'MUNDAWAR'};
+CREDENTIALS['m018']={pass:'mw018',role:'school',name:'GSSS MAJRI KHOLA',block:'MUNDAWAR'};
+CREDENTIALS['m019']={pass:'mw019',role:'school',name:'GSSS RARWA',block:'MUNDAWAR'};
+CREDENTIALS['m020']={pass:'mw020',role:'school',name:'GSSS KHANPUR AHIR',block:'MUNDAWAR'};
+CREDENTIALS['m021']={pass:'mw021',role:'school',name:'GSSS Chandpur',block:'MUNDAWAR'};
+CREDENTIALS['m022']={pass:'mw022',role:'school',name:'GSSS Mao',block:'MUNDAWAR'};
+CREDENTIALS['m023']={pass:'mw023',role:'school',name:'PM SHRI GSSS JINDOLI',block:'MUNDAWAR'};
+CREDENTIALS['m024']={pass:'mw024',role:'school',name:'GGSSS SODAWAS',block:'MUNDAWAR'};
+CREDENTIALS['m025']={pass:'mw025',role:'school',name:'GSSS SODAWAS',block:'MUNDAWAR'};
+CREDENTIALS['m026']={pass:'mw026',role:'school',name:'GSSS MUNDAWAR',block:'MUNDAWAR'};
+CREDENTIALS['m027']={pass:'mw027',role:'school',name:'MGGS MUNDAWAR',block:'MUNDAWAR'};
+CREDENTIALS['m028']={pass:'mw028',role:'school',name:'GSSS MANKA',block:'MUNDAWAR'};
+CREDENTIALS['m029']={pass:'mw029',role:'school',name:'GSSS BEHROJ',block:'MUNDAWAR'};
+CREDENTIALS['m030']={pass:'mw030',role:'school',name:'MGGS JALAWAS',block:'MUNDAWAR'};
+CREDENTIALS['m031']={pass:'mw031',role:'school',name:'GSSS MOLAWAS',block:'MUNDAWAR'};
+CREDENTIALS['m032']={pass:'mw032',role:'school',name:'GSSS GADUWAS',block:'MUNDAWAR'};
+CREDENTIALS['m033']={pass:'mw033',role:'school',name:'MGGS RASGAN',block:'MUNDAWAR'};
+CREDENTIALS['m034']={pass:'mw034',role:'school',name:'GSSS NANGAL SANTOKDA',block:'MUNDAWAR'};
+CREDENTIALS['m035']={pass:'mw035',role:'school',name:'GSSS KHARETA',block:'MUNDAWAR'};
+CREDENTIALS['m036']={pass:'mw036',role:'school',name:'GSSS Sorkha Kalan',block:'MUNDAWAR'};
+CREDENTIALS['m037']={pass:'mw037',role:'school',name:'GSSS SIHALI KHURD',block:'MUNDAWAR'};
+CREDENTIALS['m038']={pass:'mw038',role:'school',name:'GSSS SIHALI KALAN',block:'MUNDAWAR'};
+CREDENTIALS['m039']={pass:'mw039',role:'school',name:'GSSS Sheelgaon',block:'MUNDAWAR'};
+CREDENTIALS['m040']={pass:'mw040',role:'school',name:'GSSS ULAHEDI',block:'MUNDAWAR'};
+CREDENTIALS['m041']={pass:'mw041',role:'school',name:'GSSS NANGAL RANIYA',block:'MUNDAWAR'};
+CREDENTIALS['m042']={pass:'mw042',role:'school',name:'GSSS BALLUWAS',block:'MUNDAWAR'};
+CREDENTIALS['m043']={pass:'mw043',role:'school',name:'GSSS JAGIWADA',block:'MUNDAWAR'};
+CREDENTIALS['m044']={pass:'mw044',role:'school',name:'GSSS MAINPUR',block:'MUNDAWAR'};
+CREDENTIALS['m045']={pass:'mw045',role:'school',name:'GSSS SIYAKHOH',block:'MUNDAWAR'};
+CREDENTIALS['m046']={pass:'mw046',role:'school',name:'GSSS RAJWARA',block:'MUNDAWAR'};
+CREDENTIALS['m047']={pass:'mw047',role:'school',name:'GSSS AJARKA',block:'MUNDAWAR'};
+CREDENTIALS['m048']={pass:'mw048',role:'school',name:'GSSS Palawa',block:'MUNDAWAR'};
+CREDENTIALS['m049']={pass:'mw049',role:'school',name:'GSSS Dantla',block:'MUNDAWAR'};
+CREDENTIALS['m050']={pass:'mw050',role:'school',name:'GSSS Nangli Ojha',block:'MUNDAWAR'};
+CREDENTIALS['m051']={pass:'mw051',role:'school',name:'MGGS MUNDANWARA KALAN',block:'MUNDAWAR'};
+CREDENTIALS['m052']={pass:'mw052',role:'school',name:'GSSS Pehal',block:'MUNDAWAR'};
+CREDENTIALS['m053']={pass:'mw053',role:'school',name:'MGGS Beejwar Chauhan',block:'MUNDAWAR'};
+CREDENTIALS['m054']={pass:'mw054',role:'school',name:'SVP GSSS MOHAMMADPUR',block:'MUNDAWAR'};
+CREDENTIALS['m055']={pass:'mw055',role:'school',name:'GSSS SHYOPUR',block:'MUNDAWAR'};
+CREDENTIALS['m056']={pass:'mw056',role:'school',name:'GSSS RENAGIRI',block:'MUNDAWAR'};
+CREDENTIALS['m057']={pass:'mw057',role:'school',name:'GSSS Sirod Khurd',block:'MUNDAWAR'};
+CREDENTIALS['m058']={pass:'mw058',role:'school',name:'GSSS SHAMDA',block:'MUNDAWAR'};
+CREDENTIALS['m059']={pass:'mw059',role:'school',name:'GSSS Naredi',block:'MUNDAWAR'};
+CREDENTIALS['m060']={pass:'mw060',role:'school',name:'GSSS RUNDH',block:'MUNDAWAR'};
+CREDENTIALS['m061']={pass:'mw061',role:'school',name:'MGGS MATORE',block:'MUNDAWAR'};
+CREDENTIALS['m062']={pass:'mw062',role:'school',name:'GSSS BHUNGDA AHEER',block:'MUNDAWAR'};
+CREDENTIALS['m063']={pass:'mw063',role:'school',name:'GGSS SANOLI',block:'MUNDAWAR'};
+CREDENTIALS['m064']={pass:'mw064',role:'school',name:'GSSS Gopipura',block:'MUNDAWAR'};
+CREDENTIALS['m065']={pass:'mw065',role:'school',name:'GSSS Karnikot',block:'MUNDAWAR'};
+CREDENTIALS['m066']={pass:'mw066',role:'school',name:'GSSS JASAI',block:'MUNDAWAR'};
+CREDENTIALS['m067']={pass:'mw067',role:'school',name:'GSSS BEHROJ',block:'MUNDAWAR'};
+CREDENTIALS['k001']={pass:'kb001',role:'school',name:'GSSS BAGHERIKALAN',block:'KISHANGARH BAS'};
+CREDENTIALS['k002']={pass:'kb002',role:'school',name:'GSSS MIRZAPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k003']={pass:'kb003',role:'school',name:'MGGS BAGHODA',block:'KISHANGARH BAS'};
+CREDENTIALS['k004']={pass:'kb004',role:'school',name:'GGSS BAHADURPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k005']={pass:'kb005',role:'school',name:'GSSS BAHADURPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k006']={pass:'kb006',role:'school',name:'GSSS SIWANA',block:'KISHANGARH BAS'};
+CREDENTIALS['k007']={pass:'kb007',role:'school',name:'GSSS VALLBHGRAM',block:'KISHANGARH BAS'};
+CREDENTIALS['k008']={pass:'kb008',role:'school',name:'GGSS BAMBORA',block:'KISHANGARH BAS'};
+CREDENTIALS['k009']={pass:'kb009',role:'school',name:'GSSS BAMBORA',block:'KISHANGARH BAS'};
+CREDENTIALS['k010']={pass:'kb010',role:'school',name:'GSSS BHAJEDA',block:'KISHANGARH BAS'};
+CREDENTIALS['k011']={pass:'kb011',role:'school',name:'GSSS BRASANGPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k012']={pass:'kb012',role:'school',name:'GSSS CHIKANI',block:'KISHANGARH BAS'};
+CREDENTIALS['k013']={pass:'kb013',role:'school',name:'GSSS CHORBASAI',block:'KISHANGARH BAS'};
+CREDENTIALS['k014']={pass:'kb014',role:'school',name:'SWAMI VIVEKANAND GOVT. MODEL SCHOOL KISHANGARH BAS',block:'KISHANGARH BAS'};
+CREDENTIALS['k015']={pass:'kb015',role:'school',name:'GSSS DHAMUKAD',block:'KISHANGARH BAS'};
+CREDENTIALS['k016']={pass:'kb016',role:'school',name:'GSSS DONGDA',block:'KISHANGARH BAS'};
+CREDENTIALS['k017']={pass:'kb017',role:'school',name:'MGGS GHASOLI',block:'KISHANGARH BAS'};
+CREDENTIALS['k018']={pass:'kb018',role:'school',name:'GGSS ISMAILPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k019']={pass:'kb019',role:'school',name:'MGGS ISMAILPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k020']={pass:'kb020',role:'school',name:'GSSS JAJOR',block:'KISHANGARH BAS'};
+CREDENTIALS['k021']={pass:'kb021',role:'school',name:'GSSS DADARHEDA',block:'KISHANGARH BAS'};
+CREDENTIALS['k022']={pass:'kb022',role:'school',name:'GSSS TAHATADA',block:'KISHANGARH BAS'};
+CREDENTIALS['k023']={pass:'kb023',role:'school',name:'GSSS JILOTA',block:'KISHANGARH BAS'};
+CREDENTIALS['k024']={pass:'kb024',role:'school',name:'GSSS JODIYA PATTI',block:'KISHANGARH BAS'};
+CREDENTIALS['k025']={pass:'kb025',role:'school',name:'GSSS KAROLI',block:'KISHANGARH BAS'};
+CREDENTIALS['k026']={pass:'kb026',role:'school',name:'GGSS KHANPUR MEWAN',block:'KISHANGARH BAS'};
+CREDENTIALS['k027']={pass:'kb027',role:'school',name:'GSSS KHANPUR MEWAN',block:'KISHANGARH BAS'};
+CREDENTIALS['k028']={pass:'kb028',role:'school',name:'GSSS KITHOOR',block:'KISHANGARH BAS'};
+CREDENTIALS['k029']={pass:'kb029',role:'school',name:'GSSS KOLGAON',block:'KISHANGARH BAS'};
+CREDENTIALS['k030']={pass:'kb030',role:'school',name:'GSSS SHEKHPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k031']={pass:'kb031',role:'school',name:'GSSS LANGARBAS',block:'KISHANGARH BAS'};
+CREDENTIALS['k032']={pass:'kb032',role:'school',name:'GSSS TITARKA',block:'KISHANGARH BAS'};
+CREDENTIALS['k033']={pass:'kb033',role:'school',name:'GSSS MACHHROLI',block:'KISHANGARH BAS'};
+CREDENTIALS['k034']={pass:'kb034',role:'school',name:'GSSS KHOHAGAON',block:'KISHANGARH BAS'};
+CREDENTIALS['k035']={pass:'kb035',role:'school',name:'GSSS MAHRAMPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k036']={pass:'kb036',role:'school',name:'GSSS MAHOND',block:'KISHANGARH BAS'};
+CREDENTIALS['k037']={pass:'kb037',role:'school',name:'GSSS JATKA',block:'KISHANGARH BAS'};
+CREDENTIALS['k038']={pass:'kb038',role:'school',name:'GSSS MANCHA',block:'KISHANGARH BAS'};
+CREDENTIALS['k039']={pass:'kb039',role:'school',name:'GSSS MEERKA',block:'KISHANGARH BAS'};
+CREDENTIALS['k040']={pass:'kb040',role:'school',name:'GSSS MOTHUKA',block:'KISHANGARH BAS'};
+CREDENTIALS['k041']={pass:'kb041',role:'school',name:'GSSS MUSAKHERA',block:'KISHANGARH BAS'};
+CREDENTIALS['k042']={pass:'kb042',role:'school',name:'GSSS NOORNAGAR',block:'KISHANGARH BAS'};
+CREDENTIALS['k043']={pass:'kb043',role:'school',name:'GGSS ANAND NAGAR KHAIRTHAL',block:'KISHANGARH BAS'};
+CREDENTIALS['k044']={pass:'kb044',role:'school',name:'GGSS KHAIRTHAL',block:'KISHANGARH BAS'};
+CREDENTIALS['k045']={pass:'kb045',role:'school',name:'GSSS KHAIRTHAL',block:'KISHANGARH BAS'};
+CREDENTIALS['k046']={pass:'kb046',role:'school',name:'GSSS BAS KRIPAL NAGAR',block:'KISHANGARH BAS'};
+CREDENTIALS['k047']={pass:'kb047',role:'school',name:'GSSS OPPOSITE SDM OFFICE KISHANGARH BAS',block:'KISHANGARH BAS'};
+CREDENTIALS['k048']={pass:'kb048',role:'school',name:'GSSS ODARA',block:'KISHANGARH BAS'};
+CREDENTIALS['k049']={pass:'kb049',role:'school',name:'GSSS PATAN MEWAN',block:'KISHANGARH BAS'};
+CREDENTIALS['k050']={pass:'kb050',role:'school',name:'GSSS JAGTA BASAI',block:'KISHANGARH BAS'};
+CREDENTIALS['k051']={pass:'kb051',role:'school',name:'MGGS RATAKHURD',block:'KISHANGARH BAS'};
+CREDENTIALS['k052']={pass:'kb052',role:'school',name:'GSSS TARWALA',block:'KISHANGARH BAS'};
+CREDENTIALS['k053']={pass:'kb053',role:'school',name:'GSSS TEHNOLI',block:'KISHANGARH BAS'};
+CREDENTIALS['k054']={pass:'kb054',role:'school',name:'GGSS ADARSH COLONY KISHANGARH BAS',block:'KISHANGARH BAS'};
+CREDENTIALS['k055']={pass:'kb055',role:'school',name:'PM SHRI GSSS KHIDARPUR',block:'KISHANGARH BAS'};
+CREDENTIALS['k056']={pass:'kb056',role:'school',name:'GSSS CHAMRODA',block:'KISHANGARH BAS'};
+CREDENTIALS['o001']={pass:'kk001',role:'school',name:'GSSS AAKOLI',block:'KOTKASIM'};
+CREDENTIALS['o002']={pass:'kk002',role:'school',name:'GSSS BAGHANA',block:'KOTKASIM'};
+CREDENTIALS['o003']={pass:'kk003',role:'school',name:'GSSS BAGHERI KHURD',block:'KOTKASIM'};
+CREDENTIALS['o004']={pass:'kk004',role:'school',name:'GSSS BEELAHEDI',block:'KOTKASIM'};
+CREDENTIALS['o005']={pass:'kk005',role:'school',name:'GSSS BHONKER',block:'KOTKASIM'};
+CREDENTIALS['o006']={pass:'kk006',role:'school',name:'GSSS NASOPUR',block:'KOTKASIM'};
+CREDENTIALS['o007']={pass:'kk007',role:'school',name:'GSSS BUDHI BAWAL',block:'KOTKASIM'};
+CREDENTIALS['o008']={pass:'kk008',role:'school',name:'GSSS GHEEKAKA',block:'KOTKASIM'};
+CREDENTIALS['o009']={pass:'kk009',role:'school',name:'GSSS GIRWAS',block:'KOTKASIM'};
+CREDENTIALS['o010']={pass:'kk010',role:'school',name:'GSSS GIRWAS KANJRAN',block:'KOTKASIM'};
+CREDENTIALS['o011']={pass:'kk011',role:'school',name:'GSSS GUNSAR',block:'KOTKASIM'};
+CREDENTIALS['o012']={pass:'kk012',role:'school',name:'GSSS Bhojrajka',block:'KOTKASIM'};
+CREDENTIALS['o013']={pass:'kk013',role:'school',name:'MGM HARSAULI',block:'KOTKASIM'};
+CREDENTIALS['o014']={pass:'kk014',role:'school',name:'GSSS HARSAULI',block:'KOTKASIM'};
+CREDENTIALS['o015']={pass:'kk015',role:'school',name:'GSSS BIBIRANI',block:'KOTKASIM'};
+CREDENTIALS['o016']={pass:'kk016',role:'school',name:'GSSS KARWAD',block:'KOTKASIM'};
+CREDENTIALS['o017']={pass:'kk017',role:'school',name:'G.V.U.S.S. ALAMPUR',block:'KOTKASIM'};
+CREDENTIALS['o018']={pass:'kk018',role:'school',name:'GSSS GUJARIWAS',block:'KOTKASIM'};
+CREDENTIALS['o019']={pass:'kk019',role:'school',name:'GSSS JATIYANA',block:'KOTKASIM'};
+CREDENTIALS['o020']={pass:'kk020',role:'school',name:'MGGS JHARKA',block:'KOTKASIM'};
+CREDENTIALS['o021']={pass:'kk021',role:'school',name:'GGSSS JODIYA',block:'KOTKASIM'};
+CREDENTIALS['o022']={pass:'kk022',role:'school',name:'GSSS JODIYA',block:'KOTKASIM'};
+CREDENTIALS['o023']={pass:'kk023',role:'school',name:'GSSS KANHARKA',block:'KOTKASIM'};
+CREDENTIALS['o024']={pass:'kk024',role:'school',name:'GSSS KATOPUR',block:'KOTKASIM'};
+CREDENTIALS['o025']={pass:'kk025',role:'school',name:'GSSS KHANPUR DANGRAN',block:'KOTKASIM'};
+CREDENTIALS['o026']={pass:'kk026',role:'school',name:'MGGS LADPUR',block:'KOTKASIM'};
+CREDENTIALS['o027']={pass:'kk027',role:'school',name:'GSSS DEENGLI',block:'KOTKASIM'};
+CREDENTIALS['o028']={pass:'kk028',role:'school',name:'GSSS MATALWAS',block:'KOTKASIM'};
+CREDENTIALS['o029']={pass:'kk029',role:'school',name:'GSSS NANGAL SALIYA',block:'KOTKASIM'};
+CREDENTIALS['o030']={pass:'kk030',role:'school',name:'GSSS KOTKASIM',block:'KOTKASIM'};
+CREDENTIALS['o031']={pass:'kk031',role:'school',name:'MGGS Kotkasim',block:'KOTKASIM'};
+CREDENTIALS['o032']={pass:'kk032',role:'school',name:'GSSS PATALIYA',block:'KOTKASIM'};
+CREDENTIALS['o033']={pass:'kk033',role:'school',name:'GSSS KHAROLA',block:'KOTKASIM'};
+CREDENTIALS['o034']={pass:'kk034',role:'school',name:'GSSS PATAN AHIR',block:'KOTKASIM'};
+CREDENTIALS['o035']={pass:'kk035',role:'school',name:'MGGS PUR',block:'KOTKASIM'};
+CREDENTIALS['o036']={pass:'kk036',role:'school',name:'GSSS NEEMLAKA',block:'KOTKASIM'};
+CREDENTIALS['o037']={pass:'kk037',role:'school',name:'GSSS TEUWAS',block:'KOTKASIM'};
+CREDENTIALS['o038']={pass:'kk038',role:'school',name:'GSSS DALAWAS',block:'KOTKASIM'};
+CREDENTIALS['o039']={pass:'kk039',role:'school',name:'GSSS TIGAWAN',block:'KOTKASIM'};
+CREDENTIALS['o040']={pass:'kk040',role:'school',name:'GSSS AHER BASNA',block:'KOTKASIM'};
+CREDENTIALS['o041']={pass:'kk041',role:'school',name:'SAHEED BALWANT SINGH GSSS UJOLI',block:'KOTKASIM'};
+CREDENTIALS['o042']={pass:'kk042',role:'school',name:'MGGS JATUWAS',block:'KOTKASIM'};
+
+// ==================== QUESTIONS ====================
+const QUESTIONS = {
+  english: {
+    l1: [
+      { type:"अक्षर पहचान", instruction:"बच्चे को ये अक्षर दिखाएं — कोई भी 5 पढ़ने को कहें (कम से कम 4 सही)", display:"c  j  x\nn  p  u\ns  o  k  h", isEn:true, ask:"इनमें से कोई 5 अक्षर पढ़ो", expected:"4/5 सही — c, j, x, n, p, u, s, o, k, h" },
+      { type:"शब्द पठन", instruction:"बच्चे को ये शब्द दिखाएं — कोई 5 पढ़ने को कहें", display:"run    book\ncat    tall\nfan    jump\ncup    rope\nbag    nice", isEn:true, ask:"इनमें से कोई 5 शब्द पढ़ो", expected:"4/5 सही पढ़े" },
+      { type:"सरल वाक्य पठन", instruction:"बच्चे को यह वाक्य पढ़कर सुनाने को कहें", display:"Rani is a tall girl.\nShe loves to drink milk.\nRani likes to run fast.", isEn:true, ask:"यह पढ़ो", expected:"कम से कम 1 वाक्य सही पढ़े" },
+      { type:"वाक्य बोध", instruction:"वाक्य पढ़वाने के बाद यह प्रश्न पूछें", display:"Rani is a tall girl.\nShe loves to drink milk.\nShe runs to school every day.", isEn:true, ask:"Rani को क्या पीना पसंद है? (What does Rani love?)", expected:"milk / दूध" },
+      { type:"रिक्त स्थान", instruction:"मौखिक रूप से पूछें", display:"This is ___ apple.\n(a  या  an ?)", isEn:true, ask:"खाली जगह में क्या आएगा?", expected:"an" }
+    ],
+    l2: [
+      { type:"अनुच्छेद पठन", instruction:"बच्चे को यह पूरा अनुच्छेद पढ़ने को कहें", display:"On Monday, Alia was very happy.\nShe went to school for the first time.\nShe had a new school bag for her books.\nShe put a red flower on the bag.", isEn:true, ask:"यह पूरा पढ़ो", expected:"अधिकांश वाक्य प्रवाह से पढ़े" },
+      { type:"कहानी बोध 1", instruction:"अनुच्छेद पढ़वाने के बाद पूछें", display:"On Monday, Alia was very happy.\nShe went to school for the first time.", isEn:true, ask:"Alia खुश क्यों थी? (Why was Alia happy?)", expected:"पहली बार स्कूल गई / first time school" },
+      { type:"कहानी बोध 2", instruction:"यह कहानी सुनाएं फिर पूछें", display:"Rohit lived in a small village.\nHis brother Ajay lived in a city.\nRohit was happy when Ajay came home.\nThey played games and had fun.", isEn:true, ask:"Rohit और Ajay ने क्या किया? (What did they do?)", expected:"खेले / played games / had fun" },
+      { type:"व्याकरण", instruction:"मौखिक पूछें", display:"The sun ___ in the east.\n(rise  /  rises)", isEn:true, ask:"सही शब्द — rise या rises?", expected:"rises" },
+      { type:"शब्द ज्ञान", instruction:"मौखिक पूछें", display:"BIG का विलोम (opposite) क्या है?", isEn:true, ask:"BIG का उल्टा?", expected:"SMALL" }
+    ]
+  },
+  hindi: {
+    l1: [
+      { type:"अक्षर पहचान", instruction:"बच्चे को ये अक्षर दिखाएं — कोई 5 पढ़ने को कहें", display:"क  ख  ग\nच  ट  न\nम  र  स  ल", isEn:false, ask:"इनमें से कोई 5 अक्षर पढ़ो", expected:"4/5 सही पहचाने" },
+      { type:"शब्द पठन", instruction:"बच्चे को ये शब्द दिखाएं — कोई 5 पढ़ने को कहें", display:"कमल    राम\nघर     पानी\nमाँ     बाल\nसूरज   चाँद\nगाय    नदी", isEn:false, ask:"इनमें से कोई 5 शब्द पढ़ो", expected:"4/5 सही पढ़े" },
+      { type:"सरल वाक्य", instruction:"बच्चे को यह वाक्य पढ़कर सुनाने को कहें", display:"राम स्कूल जाता है।\nवह पढ़ता है।\nउसकी माँ घर पर है।", isEn:false, ask:"यह पढ़ो", expected:"कम से कम 1 वाक्य सही पढ़े" },
+      { type:"वाक्य बोध", instruction:"वाक्य पढ़वाने के बाद पूछें", display:"रानी एक लंबी लड़की है।\nउसे दूध पीना पसंद है।\nवह रोज़ स्कूल दौड़कर जाती है।", isEn:false, ask:"रानी को क्या पीना पसंद है?", expected:"दूध" },
+      { type:"रिक्त स्थान", instruction:"मौखिक पूछें", display:"सूरज ___ में उगता है।\n(पूरब  /  पश्चिम)", isEn:false, ask:"खाली जगह में क्या आएगा?", expected:"पूरब" }
+    ],
+    l2: [
+      { type:"अनुच्छेद पठन", instruction:"बच्चे को यह पूरा अनुच्छेद पढ़ने को कहें", display:"सोमवार को आलिया बहुत खुश थी।\nवह पहली बार स्कूल गई।\nउसके पास किताबों के लिए नया बस्ता था।\nउसने बस्ते पर एक लाल फूल लगाया।", isEn:false, ask:"यह पूरा पढ़ो", expected:"अधिकांश वाक्य प्रवाह से पढ़े" },
+      { type:"कहानी बोध 1", instruction:"अनुच्छेद पढ़वाने के बाद पूछें", display:"सोमवार को आलिया बहुत खुश थी।\nवह पहली बार स्कूल गई।", isEn:false, ask:"आलिया खुश क्यों थी?", expected:"पहली बार स्कूल गई" },
+      { type:"कहानी बोध 2", instruction:"यह सुनाएं फिर पूछें", display:"समीर एक दिन स्कूल में था।\nउसने मेज़ पर पुरानी किताबें देखीं।\nसमीर ने एक बड़ी किताब उठाई।\nवह माँ को दिखाने के लिए किताब घर ले गया।", isEn:false, ask:"समीर किताब किसे दिखाने ले गया?", expected:"माँ को" },
+      { type:"व्याकरण — वचन", instruction:"मौखिक पूछें", display:"\"लड़का\" का बहुवचन क्या होगा?", isEn:false, ask:"लड़का का बहुवचन बताओ", expected:"लड़के" },
+      { type:"विलोम शब्द", instruction:"मौखिक पूछें", display:"\"दिन\" का विलोम शब्द क्या है?", isEn:false, ask:"दिन का उल्टा क्या होता है?", expected:"रात" }
+    ]
+  },
+  math: {
+    l1: [
+      { type:"संख्या पहचान (1-9)", instruction:"बच्चे को ये संख्याएं दिखाएं — कोई 5 पहचानने को कहें", display:"1   4\n7   3\n6   9\n5   2", isEn:true, ask:"इनमें से कोई 5 संख्याएं बताओ", expected:"कम से कम 4 सही पहचाने" },
+      { type:"संख्या पहचान (10-99)", instruction:"बच्चे को ये दो-अंकीय संख्याएं दिखाएं", display:"96   15\n24   61\n74   46\n39   52", isEn:true, ask:"इनमें से कोई 5 संख्याएं पढ़ो", expected:"कम से कम 4 सही पहचाने" },
+      { type:"जोड़", instruction:"मौखिक या लिखित रूप से पूछें", display:"5 + 3 = ?\n4 + 6 = ?", isEn:true, ask:"ये दोनों जोड़ बताओ", expected:"8 और 10" },
+      { type:"घटाव (सरल)", instruction:"मौखिक या लिखित पूछें", display:"9 − 4 = ?\n7 − 3 = ?", isEn:true, ask:"ये दोनों घटाओ", expected:"5 और 4" },
+      { type:"संख्या पैटर्न", instruction:"मौखिक या लिखित पूछें", display:"2, 4, 6, ___, 10\n\n(खाली जगह क्या आएगा?)", isEn:false, ask:"खाली जगह में क्या आएगा?", expected:"8" }
+    ],
+    l2: [
+      { type:"घटाव (दो अंक) — 1", instruction:"बच्चे को ये सवाल दिखाएं", display:"  82        51\n− 64      − 28", isEn:true, ask:"ये दोनों घटाओ", expected:"18 और 23" },
+      { type:"घटाव (दो अंक) — 2", instruction:"बच्चे को ये सवाल दिखाएं", display:"  37        66\n− 18      − 28", isEn:true, ask:"ये दोनों घटाओ", expected:"19 और 38" },
+      { type:"गुणा", instruction:"मौखिक या लिखित पूछें", display:"6 × 7 = ?", isEn:true, ask:"छह सात कितने होते हैं?", expected:"42" },
+      { type:"भाग", instruction:"बच्चे को यह सवाल दिखाएं", display:"8 ) 994", isEn:true, ask:"994 को 8 से भाग दो", expected:"124 (शेष 2)" },
+      { type:"शब्द समस्या", instruction:"मौखिक रूप से यह प्रश्न पूछें", display:"एक दुकान में 45 आम थे।\n18 बिक गए।\nकितने आम बचे?", isEn:false, ask:"कितने आम बचे?", expected:"27" }
+    ]
+  }
+};
+
+const SUBJECT_NAMES = { english:"अंग्रेज़ी", hindi:"हिंदी", math:"गणित" };
+const SUBJECTS = ["english","hindi","math"];
+const SCORE_VALS = { correct:2, partial:1, wrong:0 };
+const ADVANCE_THRESHOLD = 8;
+const CAT_LABELS = { needs:"सहायता चाहिए", developing:"विकासशील", proficient:"दक्ष" };
+const CAT_CLASS = { needs:"prof-needs", developing:"prof-developing", proficient:"prof-proficient" };
+
+// ==================== STATE ====================
+let state = { user:null, currentStudent:null, assessment:null, timerInterval:null, reportMode:null, cachedStudents:[] };
+let offlineQueue = JSON.parse(localStorage.getItem("offlineQueue") || "[]");
+
+// ==================== API ====================
+async function sendToSheet(studentData) {
+  saveToLocal(studentData);
+  return new Promise(resolve => {
+    const cb = "cb_" + Date.now();
+    const sc = document.createElement("script");
+    const to = setTimeout(() => {
+      delete window[cb]; try{document.body.removeChild(sc);}catch(e){}
+      resolve({status:"timeout"});
+    }, 10000);
+    window[cb] = (res) => {
+      clearTimeout(to); delete window[cb];
+      try{document.body.removeChild(sc);}catch(e){}
+      resolve(res || {status:"success"});
+    };
+    const enc = encodeURIComponent(JSON.stringify(studentData));
+    sc.src = APPS_SCRIPT_URL + "?action=save&data=" + enc + "&callback=" + cb;
+    sc.onerror = () => {
+      clearTimeout(to); delete window[cb];
+      offlineQueue.push(studentData);
+      localStorage.setItem("offlineQueue", JSON.stringify(offlineQueue));
+      resolve({status:"queued"});
+    };
+    document.body.appendChild(sc);
+  });
+}
+async function flushOfflineQueue() {
+  if (!offlineQueue.length || !APPS_SCRIPT_URL || APPS_SCRIPT_URL === "https://script.google.com/macros/s/AKfycbwbtIbfUni3YcNOEkLrKBWKDYO_8iRayL3ff0Hbtv7qldu19afrgvRm46pW4jTE0mcq/exec") return;
+  const remaining = [];
+  for (const item of offlineQueue) {
+    try {
+      await fetch(APPS_SCRIPT_URL, { method:"POST", body: JSON.stringify(item) });
+    } catch(e) {
+      remaining.push(item);
+    }
+  }
+  offlineQueue = remaining;
+  localStorage.setItem("offlineQueue", JSON.stringify(offlineQueue));
+}
+
+async function fetchFromSheet(scope) {
+  return new Promise(resolve => {
+    const cb = "cb_" + Date.now();
+    const sc = document.createElement("script");
+    const to = setTimeout(() => {
+      delete window[cb]; try{document.body.removeChild(sc);}catch(e){}
+      resolve(getLocalStudents(scope));
+    }, 8000);
+    window[cb] = (res) => {
+      clearTimeout(to); delete window[cb];
+      try{document.body.removeChild(sc);}catch(e){}
+      resolve(res && res.students ? res.students : getLocalStudents(scope));
+    };
+    sc.src = APPS_SCRIPT_URL + "?scope=" + encodeURIComponent(scope) + "&callback=" + cb;
+    sc.onerror = () => { clearTimeout(to); delete window[cb]; resolve(getLocalStudents(scope)); };
+    document.body.appendChild(sc);
+  });
+}
+// ==================== LOGIN ====================
+function doLogin() {
+  const u = document.getElementById("login-user").value.trim().toLowerCase();
+  const p = document.getElementById("login-pass").value.trim();
+  const cred = CREDENTIALS[u];
+  if (!cred || cred.pass !== p) {
+    document.getElementById("login-error").style.display = "block";
+    document.getElementById("login-error").textContent = "गलत उपयोगकर्ता नाम या पासवर्ड";
+    return;
+  }
+  state.user = { username:u, ...cred };
+  flushOfflineQueue();
+  if (cred.role === "district") loadDistrictDash();
+  else loadSchoolDash();
+}
+function doLogout() {
+  state.user = null;
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  document.getElementById("login-user").value = "";
+  document.getElementById("login-pass").value = "";
+  document.getElementById("login-error").style.display = "none";
+  showScreen("screen-login");
+}
+
+// ==================== SCHOOL DASH ====================
+async function loadSchoolDash() {
+  showScreen("screen-school-dash");
+  document.getElementById("school-dash-title").textContent = state.user.name;
+  document.getElementById("school-dash-sub").textContent = state.user.block + " ब्लॉक";
+  // Show offline queue notice
+  const qn = document.getElementById("offline-queue-notice");
+  if (offlineQueue.length > 0) {
+    qn.innerHTML = `<div class="offline-queue">⚠️ ${offlineQueue.length} रिकॉर्ड offline हैं — internet आने पर अपने आप sync होंगे</div>`;
+  } else { qn.innerHTML = ""; }
+  const students = await fetchFromSheet(state.user.name);
+  state.cachedStudents = students;
+  document.getElementById("sd-total").textContent = students.length;
+  document.getElementById("sd-proficient").textContent = students.filter(s => getOverallCat(s) === "proficient").length;
+  document.getElementById("sd-developing").textContent = students.filter(s => getOverallCat(s) === "developing").length;
+  document.getElementById("sd-needs").textContent = students.filter(s => getOverallCat(s) === "needs").length;
+}
+function showSchoolDash() { loadSchoolDash(); }
+
+// ==================== ASSESSMENT ====================
+function startAssessment() {
+  const name = document.getElementById("st-name").value.trim();
+  const father = document.getElementById("st-father").value.trim();
+  const cls = document.getElementById("st-class").value;
+  if (!name || !father || !cls) {
+    document.getElementById("error-student").style.display = "block";
+    document.getElementById("error-student").textContent = "कृपया सभी जानकारी भरें";
+    return;
+  }
+  document.getElementById("error-student").style.display = "none";
+  state.currentStudent = { name, father, cls, school:state.user.name, block:state.user.block, date:new Date().toLocaleDateString("hi-IN") };
+  state.assessment = { subjects:{}, currentSubject:0, currentQuestion:0, showingTransition:false };
+  SUBJECTS.forEach(s => { state.assessment.subjects[s] = { level:1, l1marks:[], l2marks:[], done:false }; });
+  document.getElementById("assess-title").textContent = name;
+  document.getElementById("assess-sub").textContent = state.user.name;
+  startTimer();
+  renderAssessment();
+  showScreen("screen-assessment");
+}
+
+function startTimer() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  let secs = 300;
+  updateTimerDisplay(secs);
+  state.timerInterval = setInterval(() => {
+    secs--;
+    updateTimerDisplay(secs);
+    if (secs <= 0) { clearInterval(state.timerInterval); showToast("⏰ समय समाप्त!"); setTimeout(finishAssessment, 1000); }
+  }, 1000);
+}
+function updateTimerDisplay(secs) {
+  const el = document.getElementById("timer-text"), td = document.getElementById("timer-display");
+  if (!el) return;
+  el.textContent = Math.floor(secs/60) + ":" + String(secs%60).padStart(2,"0");
+  td.className = secs <= 60 ? "timer warn" : "timer";
+}
+
+function renderAssessment() {
+  const a = state.assessment;
+  const si = a.currentSubject;
+  if (si >= SUBJECTS.length) { finishAssessment(); return; }
+  const subj = SUBJECTS[si];
+  const sd = a.subjects[subj];
+  const level = sd.level;
+  const qi = a.currentQuestion;
+  const questions = QUESTIONS[subj]["l"+level];
+  let done = 0;
+  SUBJECTS.forEach((s,i) => { const d = a.subjects[s]; if (d.done) done+=10; else if (i===si) done+=(d.l1marks.length+d.l2marks.length); });
+  document.getElementById("assess-progress").style.width = Math.round(done/30*100)+"%";
+  let tabsHtml = "";
+  SUBJECTS.forEach((s,i) => { const d = a.subjects[s]; const cls = d.done?"tab done":(i===si?"tab active":"tab"); tabsHtml += `<button class="${cls}">${SUBJECT_NAMES[s]}${d.done?" ✓":""}</button>`; });
+  document.getElementById("subject-tabs").innerHTML = tabsHtml;
+  if (a.showingTransition) return;
+  if (qi >= questions.length) { handleSubjectEnd(); return; }
+  const q = questions[qi];
+  const curMarks = level===1 ? sd.l1marks : sd.l2marks;
+  const curScore = curMarks.reduce((a,v) => a+SCORE_VALS[v], 0);
+  const levelClass = level===1 ? "level-1" : "level-2";
+  const levelLabel = level===1 ? "स्तर 1 — कक्षा 1-2" : "स्तर 2 — कक्षा 3-4";
+  document.getElementById("assess-content").innerHTML = `
+    <span class="level-badge ${levelClass}">${levelLabel}</span>
+    <div class="q-card">
+      <div class="q-num"><span>प्रश्न ${qi+1}/${questions.length} — ${SUBJECT_NAMES[subj]}</span><span>अंक: ${curScore}/${qi*2}</span></div>
+      <div class="q-type-badge">${q.type}</div>
+      <div class="q-instruction">🔹 ${q.instruction}</div>
+      <div class="q-content"><div class="${q.isEn?'q-content-en':'q-content-text'}">${q.display}</div></div>
+      <div class="q-expected">पूछें: <span>"${q.ask}"</span></div>
+      <div class="q-expected">सही उत्तर: <span>${q.expected}</span></div>
+      <div class="mark-row">
+        <button class="mark-btn correct-btn" onclick="recordMark('correct',this)"><span class="mark-icon">✓</span>सही<br><small>(2 अंक)</small></button>
+        <button class="mark-btn partial-btn" onclick="recordMark('partial',this)"><span class="mark-icon">〜</span>आंशिक<br><small>(1 अंक)</small></button>
+        <button class="mark-btn wrong-btn" onclick="recordMark('wrong',this)"><span class="mark-icon">✗</span>गलत<br><small>(0 अंक)</small></button>
+      </div>
+    </div>`;
+}
+
+function recordMark(mark, btn) {
+  const a = state.assessment;
+  const subj = SUBJECTS[a.currentSubject];
+  const sd = a.subjects[subj];
+  btn.parentElement.querySelectorAll(".mark-btn").forEach(b => { b.disabled=true; b.style.opacity="0.4"; });
+  btn.style.opacity="1"; btn.classList.add("selected");
+  if (sd.level===1) sd.l1marks.push(mark); else sd.l2marks.push(mark);
+  a.currentQuestion++;
+  if (a.currentQuestion >= QUESTIONS[subj]["l"+sd.level].length) setTimeout(handleSubjectEnd, 600);
+  else setTimeout(renderAssessment, 500);
+}
+
+function handleSubjectEnd() {
+  const a = state.assessment;
+  const subj = SUBJECTS[a.currentSubject];
+  const sd = a.subjects[subj];
+  const marks = sd.level===1 ? sd.l1marks : sd.l2marks;
+  const score = marks.reduce((acc,v) => acc+SCORE_VALS[v], 0);
+  if (sd.level===1) {
+    if (score >= ADVANCE_THRESHOLD) {
+      a.showingTransition = true;
+      document.getElementById("assess-content").innerHTML = `
+        <div class="level-transition">
+          <h3>🌟 शाबाश! स्तर 2 में प्रवेश</h3>
+          <p>${SUBJECT_NAMES[subj]} स्तर 1: <strong>${score}/10 अंक</strong></p>
+          <p style="margin-top:6px">अब स्तर 2 के प्रश्न पूछें</p>
+          <button class="next-btn" onclick="goToLevel2()">स्तर 2 शुरू करें →</button>
+        </div>`;
+    } else {
+      sd.done=true; showToast(`${SUBJECT_NAMES[subj]}: ${score}/10`);
+      a.currentSubject++; a.currentQuestion=0;
+      setTimeout(renderAssessment, 500);
+    }
+  } else {
+    sd.done=true; showToast(`${SUBJECT_NAMES[subj]}: ${score}/10`);
+    a.currentSubject++; a.currentQuestion=0;
+    setTimeout(renderAssessment, 500);
+  }
+}
+
+function goToLevel2() {
+  const a = state.assessment;
+  a.subjects[SUBJECTS[a.currentSubject]].level=2;
+  a.currentQuestion=0; a.showingTransition=false;
+  renderAssessment();
+}
+
+// ==================== SCORING ====================
+function getSubjectCat(sd) {
+  const l1 = sd.l1marks.reduce((a,v)=>a+SCORE_VALS[v],0);
+  if (l1 < ADVANCE_THRESHOLD) return "needs";
+  const l2 = sd.l2marks.reduce((a,v)=>a+SCORE_VALS[v],0);
+  return l2 <= 4 ? "developing" : "proficient";
+}
+function getOverallCat(student) {
+  if (!student.results) return "needs";
+  const cats = SUBJECTS.map(s => student.results[s]?.category || "needs");
+  const c = { proficient:0, developing:0, needs:0 };
+  cats.forEach(x => c[x]++);
+  if (c.proficient>=2) return "proficient";
+  if (c.developing>=2||(c.developing>=1&&c.proficient>=1)) return "developing";
+  return "needs";
+}
+
+// ==================== FINISH ====================
+function finishAssessment() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  const a = state.assessment;
+  const results = {};
+  SUBJECTS.forEach(s => {
+    const sd = a.subjects[s];
+    results[s] = { l1score:sd.l1marks.reduce((a,v)=>a+SCORE_VALS[v],0), l1marks:[...sd.l1marks], l2score:sd.l2marks.reduce((a,v)=>a+SCORE_VALS[v],0), l2marks:[...sd.l2marks], reachedL2:sd.l2marks.length>0, category:getSubjectCat(sd) };
+  });
+  state.currentStudent.results = results;
+  state.currentStudent.overallCategory = getOverallCat(state.currentStudent);
+  document.getElementById("result-name").textContent = state.currentStudent.name;
+  document.getElementById("result-school").textContent = state.currentStudent.school + " | कक्षा " + state.currentStudent.cls;
+  let subjHtml = "";
+  SUBJECTS.forEach(s => {
+    const r = results[s];
+    const markDots = marks => marks.map(m => { const col=m==="correct"?"var(--success)":m==="partial"?"var(--partial)":"var(--danger)"; const sym=m==="correct"?"✓":m==="partial"?"〜":"✗"; return `<span style="color:${col};font-size:13px;margin-right:3px">${sym}</span>`; }).join("");
+    const detail = r.reachedL2 ? `स्तर 1: ${r.l1score}/10 ✓ → स्तर 2: ${r.l2score}/10` : `स्तर 1: ${r.l1score}/10 (स्तर 2 नहीं पहुंचे)`;
+    subjHtml += `<div class="subject-result"><div class="sr-header"><div class="sr-name">${SUBJECT_NAMES[s]}</div><span class="proficiency-badge ${CAT_CLASS[r.category]}">${CAT_LABELS[r.category]}</span></div><div class="sr-detail">${detail}</div><div class="sr-scores">${markDots(r.l1marks)}${r.reachedL2?'<span style="margin:0 6px;color:var(--text-muted)">|</span>'+markDots(r.l2marks):""}</div></div>`;
+  });
+  document.getElementById("result-subjects").innerHTML = subjHtml;
+  const overall = state.currentStudent.overallCategory;
+  document.getElementById("result-overall").innerHTML = `<div style="display:flex;align-items:center;justify-content:center;padding:10px 0"><span class="proficiency-badge ${CAT_CLASS[overall]}" style="font-size:16px;padding:8px 24px">${CAT_LABELS[overall]}</span></div>`;
+  document.getElementById("sync-result-status").innerHTML = `<div class="sync-status sync-pending" style="margin-bottom:10px">⏳ Google Sheet में सहेजने के लिए 'सहेजें' दबाएं</div>`;
+  showScreen("screen-result");
+}
+
+async function saveAndContinue() {
+  const btn = document.getElementById("save-btn");
+  btn.disabled = true; btn.textContent = "सहेजा जा रहा है...";
+  const result = await sendToSheet(state.currentStudent);
+  const statusEl = document.getElementById("sync-result-status");
+  if (result.status === "success") {
+    statusEl.innerHTML = `<div class="sync-status sync-ok" style="margin-bottom:10px">✓ Google Sheet में सहेजा गया</div>`;
+  } else if (result.status === "queued") {
+    statusEl.innerHTML = `<div class="sync-status sync-fail" style="margin-bottom:10px">📴 Offline — internet आने पर अपने आप sync होगा</div>`;
+  } else {
+    statusEl.innerHTML = `<div class="sync-status sync-ok" style="margin-bottom:10px">✓ Device में सहेजा गया</div>`;
+  }
+  document.getElementById("st-name").value = "";
+  document.getElementById("st-father").value = "";
+  document.getElementById("st-class").value = "";
+  state.currentStudent = null; state.assessment = null;
+  setTimeout(() => { loadSchoolDash(); setTimeout(() => showScreen("screen-new-student"), 400); }, 1200);
+}
+
+// ==================== REPORTS ====================
+async function loadAndShowReports(mode) {
+  state.reportMode = mode;
+  showScreen("screen-reports");
+  document.getElementById("report-content").innerHTML = `<div class="loading"><div class="spinner"></div><br>डेटा लोड हो रहा है...</div>`;
+  const scope = mode === "district" ? "district" : state.user.name;
+  const students = await fetchFromSheet(scope);
+  state.cachedStudents = students;
+  document.getElementById("report-sub").textContent = students.length + " विद्यार्थी";
+  const filters = [{id:"all",label:"सभी"},{id:"needs",label:"सहायता"},{id:"developing",label:"विकासशील"},{id:"proficient",label:"दक्ष"}];
+  document.getElementById("filter-row").innerHTML = filters.map(f => `<button class="filter-chip ${f.id==="all"?"active":""}" onclick="filterReport('${f.id}',this)">${f.label}</button>`).join("");
+  renderReport(students, "all");
+}
+function filterReport(cat, btn) {
+  document.querySelectorAll(".filter-chip").forEach(c => c.classList.remove("active")); btn.classList.add("active");
+  renderReport(state.cachedStudents, cat);
+}
+function renderReport(students, filter) {
+  const filtered = filter==="all" ? students : students.filter(s => (s.overallCategory||getOverallCat(s))===filter);
+  if (!filtered.length) { document.getElementById("report-content").innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><div>कोई विद्यार्थी नहीं मिला</div></div>`; return; }
+  const total=filtered.length, p=filtered.filter(s=>(s.overallCategory||getOverallCat(s))==="proficient").length, d=filtered.filter(s=>(s.overallCategory||getOverallCat(s))==="developing").length, n=filtered.filter(s=>(s.overallCategory||getOverallCat(s))==="needs").length;
+  const pw=total?Math.round(p/total*100):0, dw=total?Math.round(d/total*100):0, nw=total?Math.round(n/total*100):0;
+  let html = `<div class="card" style="margin-bottom:10px"><div style="font-size:13px;font-weight:600;margin-bottom:6px">दक्षता सारांश</div><div class="summary-bar"><div class="bar-seg" style="width:${pw}%;background:var(--success)"></div><div class="bar-seg" style="width:${dw}%;background:var(--warning)"></div><div class="bar-seg" style="width:${nw}%;background:var(--danger)"></div></div><div style="display:flex;gap:12px;font-size:12px"><span style="color:var(--success)">● दक्ष: ${p}</span><span style="color:var(--warning)">● विकासशील: ${d}</span><span style="color:var(--danger)">● सहायता: ${n}</span></div></div><div class="card">`;
+  filtered.forEach(s => {
+    const overall = s.overallCategory || getOverallCat(s);
+    const dots = SUBJECTS.map(subj => { const cat=s.results?.[subj]?.category||"pending"; const dc=cat==="proficient"?"dot-proficient":cat==="developing"?"dot-developing":cat==="needs"?"dot-needs":"dot-pending"; return `<div class="dot ${dc}"></div>`; }).join("");
+    html += `<div class="student-row"><div><div class="student-name">${s.name}</div><div class="student-meta">पिता: ${s.father} | कक्षा: ${s.cls}${state.reportMode==="district"?" | "+s.school:""}</div><div class="subject-dots">${dots}<span style="font-size:11px;color:var(--text-muted);margin-left:4px">अं/हि/ग</span></div></div><span class="proficiency-badge ${CAT_CLASS[overall]}">${CAT_LABELS[overall]}</span></div>`;
+  });
+  html += "</div>";
+  document.getElementById("report-content").innerHTML = html;
+}
+function goBackFromReport() { if (state.reportMode==="district") showScreen("screen-district"); else showScreen("screen-school-dash"); }
+
+// ==================== SUBJECT SUMMARY ====================
+async function showSubjectSummary() {
+  showScreen("screen-subject-summary");
+  document.getElementById("subject-summary-content").innerHTML = `<div class="loading"><div class="spinner"></div><br>लोड हो रहा है...</div>`;
+  const students = await fetchFromSheet(state.user.name);
+  let html = "";
+  SUBJECTS.forEach(s => {
+    const total=students.length; if (!total) return;
+    const p=students.filter(st=>st.results?.[s]?.category==="proficient").length, d=students.filter(st=>st.results?.[s]?.category==="developing").length, n=students.filter(st=>st.results?.[s]?.category==="needs").length;
+    const pw=Math.round(p/total*100), dw=Math.round(d/total*100), nw=Math.round(n/total*100);
+    html += `<div class="card"><div class="section-title" style="font-size:15px">${SUBJECT_NAMES[s]}</div><div class="summary-bar"><div class="bar-seg" style="width:${pw}%;background:var(--success)"></div><div class="bar-seg" style="width:${dw}%;background:var(--warning)"></div><div class="bar-seg" style="width:${nw}%;background:var(--danger)"></div></div><div class="summary-row"><span style="color:var(--success)">दक्ष</span><span>${p} (${pw}%)</span></div><div class="summary-row"><span style="color:var(--warning)">विकासशील</span><span>${d} (${dw}%)</span></div><div class="summary-row"><span style="color:var(--danger)">सहायता चाहिए</span><span>${n} (${nw}%)</span></div></div>`;
+  });
+  if (!html) html = `<div class="empty-state"><div class="empty-icon">📊</div><div>अभी कोई डेटा नहीं</div></div>`;
+  document.getElementById("subject-summary-content").innerHTML = html;
+}
+
+// ==================== DISTRICT ====================
+async function loadDistrictDash() {
+  showScreen("screen-district");
+  document.getElementById("district-blocks").innerHTML = `<div class="loading"><div class="spinner"></div><br>लाइव डेटा लोड हो रहा है...</div>`;
+  const students = await fetchFromSheet("district");
+  document.getElementById("dd-total").textContent = students.length;
+  document.getElementById("dd-schools").textContent = new Set(students.map(s=>s.school)).size;
+  document.getElementById("dd-proficient").textContent = students.filter(s=>(s.overallCategory||getOverallCat(s))==="proficient").length;
+  document.getElementById("dd-needs").textContent = students.filter(s=>(s.overallCategory||getOverallCat(s))==="needs").length;
+  let html = "";
+  for (const [block] of Object.entries(SCHOOLS)) {
+    const bs = students.filter(s=>s.block===block);
+    const bp=bs.filter(s=>(s.overallCategory||getOverallCat(s))==="proficient").length, bn=bs.filter(s=>(s.overallCategory||getOverallCat(s))==="needs").length;
+    html += `<div class="block-card-d" onclick="showBlockDetail('${block}')"><div class="block-header"><div class="block-name">${block}</div><span style="font-size:12px;color:var(--text-muted)">${new Set(bs.map(s=>s.school)).size} विद्यालय</span></div><div class="block-stats"><div class="bstat"><div class="bstat-num">${bs.length}</div><div class="bstat-lbl">मूल्यांकन</div></div><div class="bstat"><div class="bstat-num" style="color:var(--success)">${bp}</div><div class="bstat-lbl">दक्ष</div></div><div class="bstat"><div class="bstat-num" style="color:var(--danger)">${bn}</div><div class="bstat-lbl">सहायता</div></div></div></div>`;
+  }
+  document.getElementById("district-blocks").innerHTML = html || `<div class="empty-state"><div class="empty-icon">🏫</div><div>अभी कोई डेटा नहीं</div></div>`;
+}
+async function showBlockDetail(block) {
+  state.reportMode = "district";
+  showScreen("screen-reports");
+  document.getElementById("report-sub").textContent = block + " — लोड हो रहा है...";
+  document.getElementById("report-content").innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+  const students = (await fetchFromSheet("district")).filter(s=>s.block===block);
+  state.cachedStudents = students;
+  document.getElementById("report-sub").textContent = block + " — " + students.length + " विद्यार्थी";
+  document.getElementById("filter-row").innerHTML = [{id:"all",label:"सभी"},{id:"needs",label:"सहायता"},{id:"developing",label:"विकासशील"},{id:"proficient",label:"दक्ष"}].map(f=>`<button class="filter-chip ${f.id==="all"?"active":""}" onclick="filterReport('${f.id}',this)">${f.label}</button>`).join("");
+  renderReport(students, "all");
+}
+
+// ==================== UTILS ====================
+function openSheet() { window.open(SHEET_URL, "_blank"); }
+function showScreen(id) { document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo(0,0); }
+function goBack(to) { showScreen(to); }
+function showToast(msg) { const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),2500); }
+document.getElementById("login-pass").addEventListener("keydown", e=>{ if(e.key==="Enter") doLogin(); });
+</script>
+</body>
+</html>
