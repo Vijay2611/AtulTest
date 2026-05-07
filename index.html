@@ -678,7 +678,13 @@ const CAT_CLASS = { needs:"prof-needs", developing:"prof-developing", proficient
 // ==================== STATE ====================
 let state = { user:null, currentStudent:null, assessment:null, timerInterval:null, reportMode:null, cachedStudents:[] };
 let offlineQueue = JSON.parse(localStorage.getItem("offlineQueue") || "[]");
+async function saveToLocal(studentData) {
+  let students = JSON.parse(localStorage.getItem("students") || "[]");
 
+  students.push(studentData);
+
+  localStorage.setItem("students", JSON.stringify(students));
+}
 // ==================== API ====================
 async function sendToSheet(studentData) {
   saveToLocal(studentData);
